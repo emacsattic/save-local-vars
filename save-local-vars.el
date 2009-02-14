@@ -1,12 +1,12 @@
 ;;; save-local-vars.el --- save buffer-local variables in visited file
 
-;; Copyright (C) 2008 Jonas Bernoulli
+;; Copyright (C) 2008, 2009 Jonas Bernoulli
 
-;; Author: Jonas Bernoulli <jonas@bernoulli.cc>
+;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Created: 20080830
-;; Updated: 20080830
-;; Version: 0.1
-;; Homepage: http://artavatar.net
+;; Updated: 20090214
+;; Version: 0.1.1
+;; Homepage: https://github.com/tarsius/save-local-vars
 ;; Keywords: convenience 
 
 ;; This file is not part of GNU Emacs.
