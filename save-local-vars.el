@@ -117,13 +117,16 @@ when the variable section is first created.")
 	  (insert "\n\^L"))
 	(unless (looking-back "^(provide '.+)\n")
 	  (insert "\n"))
-	(let ((comment-start comment-start))
-	  (when (string-match save-local-variable-double-comment-start
-			      comment-start)
-	    (setq comment-start (concat comment-start comment-start)))
-	  (insert comment-start " Local Variables:" comment-end "\n")
+	(let ((comment-start
+	       (concat comment-start
+		       (and (string-match
+			     save-local-variable-double-comment-start
+			     comment-start)
+			    comment-start)
+		       (and (not (string-match " $" comment-start)) " "))))
+	  (insert comment-start "Local Variables:" comment-end "\n")
 	  (save-local-variable--print variable)
-	  (insert comment-start " End:" comment-end "\n"))))
+	  (insert comment-start "End:" comment-end "\n"))))
     (when (or (not modifiedp)
 	      (y-or-n-p (format "Save %s? " (buffer-file-name))))
       (save-buffer))))
