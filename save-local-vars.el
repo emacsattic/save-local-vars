@@ -36,7 +36,7 @@ If the local value of `comment-start' matches this regular expression
 `save-local-variable' inserts it twice at the beginning of each line
 when the variable section is first created.")
 
-(defun local-variables-data ()
+(defun save-local-variable--variables-data ()
   "Return data identifying the file variable section, or nil if none."
   ;; Similar to `allout-file-vars-section-data' defined in `allout.el'.
   ;; Also see `hack-local-variables' defined in `files.el'.
@@ -92,7 +92,7 @@ when the variable section is first created.")
     (error "Buffer isn't visiting a file: %s" (buffer-name)))
   (let ((standard-output (current-buffer))
 	(modifiedp (buffer-modified-p))
-	(data (local-variables-data)))
+	(data (save-local-variable--variables-data)))
     (save-excursion
       (if data
 	  (let ((begpos (nth 0 data))
