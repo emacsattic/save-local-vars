@@ -151,4 +151,7 @@ when the variable section is first created.")
       (save-buffer))))
 
 (provide 'save-local-vars)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; save-local-vars.el ends here
