@@ -85,6 +85,7 @@ when the variable section is first created.")
   (unless (buffer-file-name)
     (error "Buffer isn't visiting a file: %s" (buffer-name)))
   (let ((standard-output (current-buffer))
+	(modifiedp (buffer-modified-p))
 	(data (local-variables-data)))
     (save-excursion
       (if data
@@ -122,9 +123,10 @@ when the variable section is first created.")
 		  (prin1-to-string variable) ": "
 		  (prin1-to-string (eval variable))
 		  comment-end "\n"
-		  comment-start " End:" comment-end "\n")))))
-  (when (y-or-n-p (format "Save %s? " (buffer-file-name)))
-    (save-buffer)))
+		  comment-start " End:" comment-end "\n"))))
+    (when (or (not modifiedp)
+	      (y-or-n-p (format "Save %s? " (buffer-file-name))))
+      (save-buffer))))
 
 (provide 'save-local-vars)
 ;;; save-local-vars.el ends here
