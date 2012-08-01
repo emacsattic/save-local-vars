@@ -62,6 +62,12 @@ when the variable section is first created.")
 	    (message "Local variables list is not properly terminated")
 	    nil))))))
 
+(defun save-local-variable--print (variable)
+  (insert comment-start " "
+	  (symbol-name variable) ": "
+	  (prin1-to-string (symbol-value variable))
+	  comment-end "\n"))
+
 (defun save-local-variable (&optional variable)
   "Save the current buffer-local value of VARIABLE in visited file."
   (interactive
@@ -91,21 +97,18 @@ when the variable section is first created.")
       (if data
 	  (let ((begpos (nth 0 data))
 		(endpos (nth 1 data))
-		(prefix (nth 2 data))
-		(suffix (nth 3 data))
+		(comment-start (nth 2 data))
+		(comment-end   (nth 3 data))
 		varpos)
 	    (goto-char begpos)
 	    (if (re-search-forward
-		 (concat "^" prefix (symbol-name variable) ": ")
+		 (concat "^" comment-start (symbol-name variable) ": ")
 		 endpos t)
 		(progn (kill-line)
 		       (insert (prin1-to-string (eval variable))
-			       suffix))
+			       comment-end))
 	      (goto-char endpos)
-	      (insert prefix " "
-		      (prin1-to-string variable) ": "
-		      (prin1-to-string (eval variable))
-		      suffix "\n")))
+	      (save-local-variable--print variable)))
 	(if (re-search-forward (format "^%s+ .+ ends here"
 				       (regexp-quote comment-start))
 			       nil t)
@@ -118,12 +121,9 @@ when the variable section is first created.")
 	  (when (string-match save-local-variable-double-comment-start
 			      comment-start)
 	    (setq comment-start (concat comment-start comment-start)))
-	  (insert comment-start " Local Variables:" comment-end "\n"
-		  comment-start " "
-		  (prin1-to-string variable) ": "
-		  (prin1-to-string (eval variable))
-		  comment-end "\n"
-		  comment-start " End:" comment-end "\n"))))
+	  (insert comment-start " Local Variables:" comment-end "\n")
+	  (save-local-variable--print variable)
+	  (insert comment-start " End:" comment-end "\n"))))
     (when (or (not modifiedp)
 	      (y-or-n-p (format "Save %s? " (buffer-file-name))))
       (save-buffer))))
