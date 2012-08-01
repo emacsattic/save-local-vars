@@ -30,6 +30,12 @@
 
 ;;; Code:
 
+(defvar save-local-variable-double-comment-start "[;]"
+  "Regexp controlling whether `comment-start' should be inserted twice.
+If the local value of `comment-start' matches this regular expression
+`save-local-variable' inserts it twice at the beginning of each line
+when the variable section is first created.")
+
 (defun local-variables-data ()
   "Return data identifying the file variable section, or nil if none."
   ;; Similar to `allout-file-vars-section-data' defined in `allout.el'.
@@ -95,7 +101,7 @@
 		       (insert (prin1-to-string (eval variable))
 			       suffix))
 	      (goto-char endpos)
-	      (insert prefix
+	      (insert prefix " "
 		      (prin1-to-string variable) ": "
 		      (prin1-to-string (eval variable))
 		      suffix "\n")))
@@ -107,12 +113,16 @@
 	  (insert "\n\^L"))
 	(unless (looking-back "^(provide '.+)\n")
 	  (insert "\n"))
-	(insert comment-start "Local Variables:" comment-end "\n"
-		comment-start
-		(prin1-to-string variable) ": "
-		(prin1-to-string (eval variable))
-		comment-end "\n"
-		comment-start "End:" comment-end "\n"))))
+	(let ((comment-start comment-start))
+	  (when (string-match save-local-variable-double-comment-start
+			      comment-start)
+	    (setq comment-start (concat comment-start comment-start)))
+	  (insert comment-start " Local Variables:" comment-end "\n"
+		  comment-start " "
+		  (prin1-to-string variable) ": "
+		  (prin1-to-string (eval variable))
+		  comment-end "\n"
+		  comment-start " End:" comment-end "\n")))))
   (when (y-or-n-p (format "Save %s? " (buffer-file-name)))
     (save-buffer)))
 
