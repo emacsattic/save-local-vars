@@ -1,10 +1,9 @@
 ;;; save-local-vars.el --- save buffer-local variables in visited file
 
-;; Copyright (C) 2008, 2009 Jonas Bernoulli
+;; Copyright (C) 2008-2012 Jonas Bernoulli
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Created: 20080830
-;; Updated: 20090214
 ;; Version: 0.1.1
 ;; Homepage: https://github.com/tarsius/save-local-vars
 ;; Keywords: convenience 
@@ -100,9 +99,15 @@
 		      (prin1-to-string variable) ": "
 		      (prin1-to-string (eval variable))
 		      suffix "\n")))
-	(goto-char (buffer-end 1))
-	(insert "\n\^L\n"
-		comment-start "Local Variables:" comment-end "\n"
+	(if (re-search-forward (format "^%s+ .+ ends here"
+				       (regexp-quote comment-start))
+			       nil t)
+	    (forward-line 0)
+	  (goto-char (buffer-end 1))
+	  (insert "\n\^L"))
+	(unless (looking-back "^(provide '.+)\n")
+	  (insert "\n"))
+	(insert comment-start "Local Variables:" comment-end "\n"
 		comment-start
 		(prin1-to-string variable) ": "
 		(prin1-to-string (eval variable))
