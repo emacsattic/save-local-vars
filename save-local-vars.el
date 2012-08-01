@@ -28,6 +28,25 @@
 ;; Save the buffer-local binding of buffer-local variables
 ;; of the current buffer locally in the visited file.
 
+;; I haven't use this package in a long time and just started fixing
+;; it.  It is usable but there are a few things missing, which I
+;; intend to fix later -- Jonas Bernoulli 20120801
+
+;; TODO
+;; * special handling of major modes
+;; * special handling of minor modes
+;; * special handling of eval forms
+;; * dectect and handle other variable/value related edge-cases
+;; * dectect and handle parsing edge-cases
+;; * align comment-end if not an empty string
+;; * use built-in code where possible
+;; * mention `add-file-local-variable-prop-list'
+;; * possibly rename to be more like ^^^
+;; * don't just ignore property line
+;; * make inserting  optional
+;; * improve commentary
+;; * I could go on
+
 ;;; Code:
 
 (defvar save-local-variable-double-comment-start "[;]"
