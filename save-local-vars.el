@@ -44,26 +44,26 @@ when the variable section is first created.")
     (save-excursion
       (goto-char (point-max))
       (search-backward "\n\^L" (max (- (point-max) 3000) (point-min)) 'move)
-      (when (search-forward "Local Variables:" nil t)
-        (let* ((begpos (line-end-position))
-	       (suffix (regexp-quote
-			(buffer-substring-no-properties
-			 (point) (line-end-position))))
-	       (prefix (regexp-quote
-			(buffer-substring-no-properties
-			 (line-beginning-position) (match-beginning 0))))
+      (when (re-search-forward
+	     (format "^\\(%s+\\)[ \t]*Local Variables:\\(.*\\)$"
+		     (regexp-quote comment-start))
+	     nil t)
+        (let* ((prefix (match-string 1))
+	       (suffix (match-string 2))
+	       (begpos (line-end-position))
 	       (endpos
-		(when (re-search-forward
-		       (concat "^" prefix "[ \t]*End:[ \t]*" suffix "$")
-		       nil t)
+		(when (re-search-forward (format "^%s[ \t]*End:[ \t]*%s$"
+						 (regexp-quote prefix)
+						 (regexp-quote suffix))
+					 nil t)
 		  (line-beginning-position))))
 	  (if endpos
 	      (list begpos endpos prefix suffix)
-	    (message "Local variables list is not properly terminated")
-	    nil))))))
+	    (error "Local variables list is not properly terminated")))))))
 
 (defun save-local-variable--print (variable)
-  (insert comment-start " "
+  (insert comment-start
+	  (if (string-match " $" comment-start) "" " ")
 	  (symbol-name variable) ": "
 	  (prin1-to-string (symbol-value variable))
 	  comment-end "\n"))
